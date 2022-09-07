@@ -99,7 +99,16 @@ resource "aws_msk_cluster" "this" {
 
   broker_node_group_info {
     client_subnets  = var.client_subnets
-    ebs_volume_size = var.volume_size
+    storage_info {
+      ebs_storage_info {
+        volume_size = var.volume_size
+      }
+    }
+    lifecycle {
+      ignore_changes = [
+        broker_node_group_info[0].storage_info[0].ebs_storage_info[0].volume_size
+      ]
+    }
     instance_type   = var.instance_type
     security_groups = concat(aws_security_group.this.*.id, var.extra_security_groups)
   }
