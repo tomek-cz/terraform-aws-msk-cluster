@@ -24,6 +24,18 @@ variable "volume_size" {
   default     = 1000
 }
 
+variable "msk_scaling_target_value" {
+  description = "The percentage of a target utilization triggering auto-scaling event."
+  type        = string
+  default     = "50"
+}
+
+variable "autoscaling" {
+  description = "Whether to enable broker disk autoscaling. It can only be enabled after the cluster is created."
+  type        = string
+  default     = "false"
+}
+
 variable "instance_type" {
   description = "Specify the instance type to use for the kafka brokers. e.g. kafka.m5.large."
   type        = string
@@ -135,4 +147,10 @@ variable "provisioned_volume_throughput" {
   description = "Throughput value of the EBS volumes for the data drive on each kafka broker node in MiB per second. The minimum value is 250. The maximum value varies between broker type. See [https://docs.aws.amazon.com/msk/latest/developerguide/msk-provision-throughput.html#throughput-bottlenecks](documentation on throughput bottlenecks)."
   type        = number
   default     = null
+}
+
+variable "msk_scaling_max_capacity" {
+  description = "Max capacity of a broker's volume that can be auto-scaled to"
+  type        = string
+  default     = "5000"
 }

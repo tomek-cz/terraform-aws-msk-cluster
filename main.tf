@@ -201,3 +201,29 @@ resource "aws_msk_cluster" "this" {
 
   tags = var.tags
 }
+
+resource "aws_appautoscaling_target" "this" {
+  count              = var.autoscaling == "true" ? 1 : 0
+  max_capacity       = var.msk_scaling_max_capacity
+  min_capacity       = 1
+  resource_id        = module.msk-cluster[0].arn
+  scalable_dimension = "kafka:broker-storage:VolumeSize"
+  service_namespace  = "kafka"
+}
+
+resource "aws_appautoscaling_policy" "this" {
+  count              = var.autoscaling == "true" ? 1 : 0
+  name               = "${var.site}-broker-scaling"
+  policy_type        = "TargetTrackingScaling"
+  resource_id        = module.msk-cluster[0].arn
+  scalable_dimension = aws_appautoscaling_target.this[0].scalable_dimension
+  service_namespace  = aws_appautoscaling_target.this[0].service_namespace
+
+  target_tracking_scaling_policy_configuration {
+    predefined_metric_specification {
+      predefined_metric_type = "KafkaBrokerStorageUtilization"
+    }
+    target_value     = var.msk_scaling_target_value
+    disable_scale_in = true
+  }
+}
