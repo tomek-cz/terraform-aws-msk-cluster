@@ -149,8 +149,8 @@ variable "provisioned_volume_throughput" {
   default     = null
 }
 
-variable "msk_scaling_max_capacity" {
-  description = "Max capacity of a broker's volume that can be auto-scaled to"
+variable "scaling_max_capacity" {
+  description = "Max capacity of a broker's volume that can be auto-scaled to."
   type        = string
-  default     = "5000"
+  default     = "16000"
 }
