@@ -206,16 +206,16 @@ resource "aws_appautoscaling_target" "this" {
   count              = var.autoscaling == "true" ? 1 : 0
   max_capacity       = var.scaling_max_capacity
   min_capacity       = 1
-  resource_id        = aws_msk_cluster.this[0].arn
+  resource_id        = aws_msk_cluster.this.arn
   scalable_dimension = "kafka:broker-storage:VolumeSize"
   service_namespace  = "kafka"
 }
 
 resource "aws_appautoscaling_policy" "this" {
   count              = var.autoscaling == "true" ? 1 : 0
-  name               = "${var.site}-broker-scaling"
+  name               = "${var.cluster_name}-appautoscaling-policy"
   policy_type        = "TargetTrackingScaling"
-  resource_id        = aws_msk_cluster.this[0].arn
+  resource_id        = aws_msk_cluster.this.arn
   scalable_dimension = aws_appautoscaling_target.this[0].scalable_dimension
   service_namespace  = aws_appautoscaling_target.this[0].service_namespace
 
